@@ -1,0 +1,45 @@
+with temp1 as (
+    select
+        submission_date,
+        hacker_id,
+        count(*) as cnt
+    from
+        temp
+    group by
+        submission_date,
+        hacker_id
+),
+temp2 as (
+    select
+        submission_date,
+        max(cnt) as max_cnt
+    from 
+        temp1
+    group by
+        submission_date
+),
+temp3 as (
+    select
+        temp2.submission_date,
+        temp1.hacker_id
+        temp2.max_cnt
+    from
+        temp2
+    left join
+        temp1
+    on 
+        temp1.submission_date = temp2.submission_date,
+        temp1.cnt = temp2.max_cnt
+)
+
+select 
+    temp3.submisstion_date,
+    h.name,
+    temp3.max_cnt,
+from 
+    temp3
+left join 
+    Hackers as h
+on
+    temp3.hacker_id = h.id
+;
